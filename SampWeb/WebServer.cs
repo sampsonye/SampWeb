@@ -71,6 +71,24 @@ namespace SampWeb
             }
         }
 
+        private void CopyReferenceFile()
+        {
+            var binfolder = Path.Combine(WebConfig.PhysicalPath, "bin");
+            var mainAssembly = Path.Combine(binfolder, CurrentAssemblyFilename);
+            if (!Directory.Exists(binfolder))
+            {
+                try
+                {
+                    Directory.Exists(binfolder);
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
+                }
+            }
+        }
+
         #endregion
     }
 }

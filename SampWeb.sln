@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40302.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampWeb", "SampWeb\SampWeb.csproj", "{A1F58681-774D-4682-B260-4902FF148EA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampWeb.Logger", "SampWeb.Logger\SampWeb.Logger.csproj", "{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A1F58681-774D-4682-B260-4902FF148EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1F58681-774D-4682-B260-4902FF148EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1F58681-774D-4682-B260-4902FF148EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

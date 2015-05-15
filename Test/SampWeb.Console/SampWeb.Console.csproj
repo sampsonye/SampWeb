@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A1F58681-774D-4682-B260-4902FF148EA7}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SampWeb</RootNamespace>
-    <AssemblyName>SampWeb</AssemblyName>
+    <RootNamespace>SampWeb.Console</RootNamespace>
+    <AssemblyName>SampWeb.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,24 +34,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consts\Attempt.cs" />
-    <Compile Include="Consts\RequestHeader.cs" />
-    <Compile Include="Consts\StateObject.cs" />
-    <Compile Include="Consts\WebConfig.cs" />
-    <Compile Include="Host.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request.cs" />
-    <Compile Include="RequestProcessor.cs" />
-    <Compile Include="RuntimeVars.cs" />
-    <Compile Include="WebServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SampWeb.Logger\SampWeb.Logger.csproj">
-      <Project>{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}</Project>
-      <Name>SampWeb.Logger</Name>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SampWeb\SampWeb.csproj">
+      <Project>{A1F58681-774D-4682-B260-4902FF148EA7}</Project>
+      <Name>SampWeb</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

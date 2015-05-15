@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40302.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampWeb", "SampWeb\SampWeb.csproj", "{A1F58681-774D-4682-B260-4902FF148EA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampWeb.Logger", "SampWeb.Logger\SampWeb.Logger.csproj", "{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CA54F97C-D0C0-460D-8BB2-0E261BBB0E28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampWeb.Console", "Test\SampWeb.Console\SampWeb.Console.csproj", "{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +25,15 @@ Global
 		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E9541C7-288F-42F0-B6D5-E66E5B38E6AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0300F0D-8A2E-44A0-A530-A3F7B14B8672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0300F0D-8A2E-44A0-A530-A3F7B14B8672} = {CA54F97C-D0C0-460D-8BB2-0E261BBB0E28}
 	EndGlobalSection
 EndGlobal

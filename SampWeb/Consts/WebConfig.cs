@@ -29,14 +29,19 @@ namespace SampWeb.Consts
         /// 是否开启目录浏览
         /// </summary>
         public bool ShowDirectoryList { get; private set; }/*目录浏览*/
+        /// <summary>
+        /// 端口监听的队列
+        /// </summary>
+        public int ListenQueue { get; set; }/*等待队列的长度*/
 
-        public WebConfig(ushort port,string physicalPath,string virtualPath,bool requireAuth,bool showDirectoryList)
+        public WebConfig(ushort port,string physicalPath,string virtualPath,bool requireAuth,bool showDirectoryList,int listenlen)
         {
             WebPort = port;
             PhysicalPath =  Path.GetFullPath(string.IsNullOrWhiteSpace(physicalPath) ? "." : physicalPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
             VirtualPath = string.IsNullOrWhiteSpace(virtualPath)?"":virtualPath;
             RequireAuthentication = requireAuth;
             ShowDirectoryList = showDirectoryList;
+            ListenQueue = listenlen;
         }
     }
 }

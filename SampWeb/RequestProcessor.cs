@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.Remoting.Lifetime;
 using System.Security.Permissions;
 using System.Text;
@@ -13,17 +14,15 @@ namespace SampWeb
 {
     public class RequestProcessor : MarshalByRefObject
     {
-        private StateObject _currentStateObject;
+        public StateObject CurrentStateObject { get; private set; }
+   
+
         public RequestProcessor(StateObject currentStateObject)
         {
-            _currentStateObject = currentStateObject;
+            CurrentStateObject = currentStateObject;
         }
 
-
-
-
-
-        public string BuildResponse(int statusCode, Dictionary<string, string> moreHeaders, string content,bool keepalive)
+        public void WriteResponse(int statusCode, Dictionary<string, string> moreHeaders, string content,bool keepalive)
         {
             var builder = new StringBuilder();
             if (moreHeaders!=null)
@@ -33,14 +32,80 @@ namespace SampWeb
                     builder.AppendFormat("{0}: {1}\r\n",key,moreHeaders[key]);
                 }
             }
-            var len = RuntimeVars.ResponseEncoding.GetByteCount(content??"");
-            var header = BuildHeader(statusCode, builder.ToString(), len, keepalive);
-            return header + content;
+            WriteResponseString(statusCode, builder.ToString(), content, keepalive);
         }
 
-        public string Build500Response(string content)
+        public void WriteResponseString(int statusCode, string moreHeaders, string content, bool keepalive)
         {
-            return BuildResponse(500, null, content, false);
+            var len = RuntimeVars.RequestEncoding.GetByteCount(content ?? "");
+            var header = BuildHeader(statusCode, moreHeaders, len, keepalive);
+            if (CurrentStateObject.ClientSocket.Connected)
+            {
+                CurrentStateObject.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(header + content));
+                if (!keepalive)
+                {
+                    CurrentStateObject.ClientSocket.Shutdown(SocketShutdown.Both);
+                    CurrentStateObject.ClientSocket.Close();
+                }
+            }
+        }
+
+        public void WriteHeader(int statusCode, string moreHeaders)
+        {
+            var header = BuildHeader(statusCode, moreHeaders, -1, false);
+            if (CurrentStateObject.ClientSocket.Connected)
+            {
+                CurrentStateObject.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(header));
+               
+            }
+        }
+
+        public void WriteBody(string content)
+        {
+            if (CurrentStateObject.ClientSocket.Connected)
+            {
+                CurrentStateObject.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(content));
+
+            }
+        }
+
+        public void Write500Response(string content)
+        {
+            WriteResponse(500, null, content, false);
+        }
+
+        public void Write100Response()
+        {
+            WriteResponse(100, null, null, true);
+        }
+        internal void WriteErrorAndClose(int statusCode, string message)
+        {
+            WriteResponse(statusCode, new Dictionary<string, string>() { { "Content-Type", "text/html;charset=utf-8" } }, GetErrorResponseBody(statusCode, message), false);
+        }
+        internal void WriteErrorAndClose(int statusCode)
+        {
+            this.WriteErrorAndClose(statusCode, null);
+        }
+
+        public void Close()
+        {
+            try
+            {
+                CurrentStateObject.ClientSocket.Shutdown(SocketShutdown.Both);
+                CurrentStateObject.ClientSocket.Close();
+            }
+            catch (Exception)
+            {
+
+
+            }
+            finally
+            {
+                CurrentStateObject.ClientSocket = null;
+                CurrentStateObject = null;
+            }
+
+
         }
 
         private string BuildHeader(int statusCode, string moreHeaders,int contentLength, bool keepAlive)
@@ -77,6 +142,43 @@ namespace SampWeb
             stringBuilder.Append("\r\n");
 
             return stringBuilder.ToString();
+        }
+
+        internal void WriteEntireResponseFromString(int statusCode, string extraHeaders, string body, bool keepAlive)
+        {
+            try
+            {
+                WriteResponse(statusCode,null,body,keepAlive);
+            }
+            catch (SocketException)
+            {
+            }
+            finally
+            {
+                if (!keepAlive)
+                {
+                    this.Close();
+                }
+            }
+        }
+
+        private string GetErrorResponseBody(int statusCode, string message)
+        {
+            string text = Messages.FormatErrorMessageBody(statusCode, CurrentStateObject.Header.RelativeUrl);
+
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                text = text + "\r\n<!--\r\n" + message + "\r\n-->";
+            }
+
+            return text;
+        }
+
+
+        public void StartProcess(WebConfig config)
+        {
+            var req = new Request(CurrentStateObject.Header, config, this);
+            req.Process();
         }
 
         #region[重载]

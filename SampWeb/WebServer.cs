@@ -20,14 +20,14 @@ namespace SampWeb
     [PermissionSet(SecurityAction.InheritanceDemand, Name = "FullTrust")]
     public class WebServer : MarshalByRefObject, IDisposable
     {
-       
+        private static readonly byte[] EndChrs = { 13, 10, 13, 10 };
         private bool _isDisposed;
         public WebConfig WebConfig { get; private set; }
-        private readonly ILogger Logger=new TextLogger();
+        private readonly ILogger _logger=new TextLogger();
         private readonly ApplicationManager _applicationManager;
         private  Host _host;
         private Socket _socketServer;
-        private object _lockObj=new object();
+        private readonly object _lockObj=new object();
         /// <summary>
         /// Field CurrentAssemblyFullPath.
         /// </summary>
@@ -65,7 +65,7 @@ namespace SampWeb
             }
             catch (Exception ex)
             {
-                Logger.Error(ex,"开启端口监听");
+                _logger.Error(ex,"开启端口监听");
                 if (_socketServer!=null)
                 {
                     _socketServer.Close();
@@ -178,9 +178,10 @@ namespace SampWeb
             }
             catch (Exception e)
             {
-               Logger.Error(e,"开始接收");
+               _logger.Error(e,"开始接收");
             }
         }
+
         private  void ReceiveCallback(IAsyncResult ar)
         {
             try
@@ -205,12 +206,14 @@ namespace SampWeb
                         client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }else if (val.Item1 == -1)
                     {
-                        var conn = new RequestProcessor(state);
-                        var content = conn.Build500Response(val.Item2);
-                        state.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(content));
-                        state.ClientSocket.Close();
+                        //var conn = new RequestProcessor(state);
+                        //conn.Write500Response(val.Item2);
+                        client.Shutdown(SocketShutdown.Both);
+                        client.Close();
                     }else if (val.Item1==1)
                     {
+                        
+                        state.Header.Content = state.TotalBytes.Skip(state.HeaderLength).ToArray();
                         SimpleResponse(state);
                     }
 
@@ -222,11 +225,9 @@ namespace SampWeb
             }
             catch (Exception e)
             {
-                Logger.Error(e,"异步接收");
+                _logger.Error(e,"异步接收");
             }
         }
-
-        private static readonly byte[] EndChrs = {13,10,13,10};
 
         private Tuple<int, string> AnalyizeRequest(StateObject state)
         {
@@ -242,39 +243,42 @@ namespace SampWeb
                 {
                     try
                     {
-                        for (int i = 0; i < state.TotalByteLength - 3; i++)
+                        if (state.TotalBytes.Skip(state.TotalByteLength - 4).SequenceEqual(EndChrs))/*Header已经解析出来*/
                         {
-                            if (state.TotalBytes.Skip(i).Take(4).SequenceEqual(EndChrs))/*Header已经解析出来*/
+                            var header = new RequestHeader
                             {
-                                var header = new RequestHeader();
-                                var headerArr = RuntimeVars.ResponseEncoding.GetString(state.TotalBytes.ToArray())
-                                    .Replace("\r\n", "\n")
-                                    .Replace("\r", "\n")
-                                    .Split('\n');
-                                var first = headerArr[0].Split(' ');
-                                HttpVerb ver;
-                                if (Enum.TryParse(first[0], out ver))
-                                {
-                                    header.Verb = ver;
-                                }
-                                header.QueryStr = first[1];
-                                header.Protocal = first[2];
-                                foreach (var line in headerArr)
-                                {
-                                    if (line.StartsWith("Content-Length"))
-                                    {
-                                        header.ContentLength = int.Parse(line.Split(':')[1]);
-                                    }
-                                }
-                                state.HeaderLength = i + 4;
-                                state.Header = header;
-                                break;
+                                RemoteIpe = (IPEndPoint) state.ClientSocket.RemoteEndPoint,
+                                LocalIpe = (IPEndPoint) state.ClientSocket.LocalEndPoint,
+                                Header = state.TotalBytes.Take(state.HeaderLength - 4).ToArray()
+                            };
+                            /* var headerArr = RuntimeVars.ResponseEncoding.GetString(state.TotalBytes.ToArray())
+                                .Replace("\r\n", "\n")
+                                .Replace("\r", "\n")
+                                .Split('\n');*/
+                            var first = RuntimeVars.RequestEncoding.GetString(state.TotalBytes.TakeWhile(p => p != EndChrs[0]).ToArray()).Split(' '); //headerArr[0].Split(' ');
+                            HttpVerb ver;
+                            if (Enum.TryParse(first[0], out ver))
+                            {
+                                header.Verb = ver;
                             }
+                            header.RelativeUrl = first[1];
+                            header.Protocal = first[2];
+                            foreach (var line in header.HeadCollection)
+                            {
+                                if (line.Key.StartsWith("Content-Length"))
+                                {
+                                    header.ContentLength = int.Parse(line.Value);
+                                    break;
+                                }
+                            }
+                            state.HeaderLength = state.TotalByteLength;
+                            state.Header = header;
+                            
                         }
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex,"解析Header头");
+                        _logger.Error(ex,"解析Header头");
                         return new Tuple<int, string>(-1, ex.Message);
                     }
                    
@@ -295,8 +299,7 @@ namespace SampWeb
                         return new Tuple<int, string>(1, null); 
                     }
                     var conn = new RequestProcessor(state);
-                    var content = conn.BuildResponse(100, null, null, true);/*这里要发一次100状态，才能获取Content数据*/
-                    state.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(content));
+                    conn.Write100Response();/*这里要发一次100状态，才能获取Content数据*/
                 }
             }
             return new Tuple<int,  string>(0,  null);
@@ -304,11 +307,8 @@ namespace SampWeb
 
         private void SimpleResponse(StateObject state)
         {
-
             var conn = new RequestProcessor(state);
-            var content = conn.BuildResponse(200, null, DateTime.Now.ToString(), false);
-            state.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(content));
-            state.ClientSocket.Close();
+           conn.StartProcess(WebConfig);
         }
 
         #endregion

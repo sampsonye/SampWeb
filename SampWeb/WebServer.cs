@@ -191,7 +191,7 @@ namespace SampWeb
                 if (bytesRead > 0)
                 {
                     state.TotalBytes.AddRange(state.Buffer.Take(bytesRead));
-                    state.ByteLength += bytesRead;
+                    state.TotalByteLength += bytesRead;
                     /*
                      * 1.先判断本地Header有没有解析出来
                      *  2.1如果未解析出来，继续接收
@@ -242,7 +242,7 @@ namespace SampWeb
                 {
                     try
                     {
-                        for (int i = 0; i < state.ByteLength - 3; i++)
+                        for (int i = 0; i < state.TotalByteLength - 3; i++)
                         {
                             if (state.TotalBytes.Skip(i).Take(4).SequenceEqual(EndChrs))/*Header已经解析出来*/
                             {
@@ -259,6 +259,13 @@ namespace SampWeb
                                 }
                                 header.QueryStr = first[1];
                                 header.Protocal = first[2];
+                                foreach (var line in headerArr)
+                                {
+                                    if (line.StartsWith("Content-Length"))
+                                    {
+                                        header.ContentLength = int.Parse(line.Split(':')[1]);
+                                    }
+                                }
                                 state.HeaderLength = i + 4;
                                 state.Header = header;
                                 break;
@@ -281,10 +288,14 @@ namespace SampWeb
                 {
                     return new Tuple<int,  string>(1, null);
                 }
-                if (state.Header.Verb==HttpVerb.POST)
+                if (state.Header.Verb == HttpVerb.POST)
                 {
+                    if ((state.TotalByteLength - state.HeaderLength)/*接收到Content长度*/ >= state.Header.ContentLength/*Content固定长度*/)
+                    {
+                        return new Tuple<int, string>(1, null); 
+                    }
                     var conn = new RequestProcessor(state);
-                    var content = conn.BuildResponse(100, null, DateTime.Now.ToString(), true);
+                    var content = conn.BuildResponse(100, null, null, true);/*这里要发一次100状态，才能获取Content数据*/
                     state.ClientSocket.Send(RuntimeVars.ResponseEncoding.GetBytes(content));
                 }
             }

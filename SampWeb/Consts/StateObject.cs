@@ -17,7 +17,7 @@ namespace SampWeb.Consts
         public Socket ClientSocket { get; set; }/*当前客户端连接*/
 
         public List<byte> TotalBytes { get; set; }/*接收到的所有字节*/
-        public int ByteLength { get; set; }/*所有字节长度*/
+        public int TotalByteLength { get; set; }/*所有字节长度*/
         public int HeaderLength { get; set; }/*HTTP头的长度*/
         public RequestHeader Header { get; set; }
 
@@ -26,7 +26,7 @@ namespace SampWeb.Consts
         {
             Buffer=new byte[BufferSize];
             TotalBytes=new List<byte>();
-            ByteLength = 0;
+            TotalByteLength = 0;
             ReceiveDone=new ManualResetEvent(false);
         }
     }

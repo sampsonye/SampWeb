@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Hosting;
+using SampWeb.Consts;
 
 namespace SampWeb
 {
@@ -16,6 +17,13 @@ namespace SampWeb
         public void Stop(bool immediate)
         {
             throw new NotImplementedException();
+        }
+
+        public void ProcessRequest(RequestProcessor processor)
+        {
+            //var conn = new RequestProcessor(state);
+            //conn.StartProcess(config);
+
         }
     }
 }

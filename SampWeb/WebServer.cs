@@ -60,8 +60,6 @@ namespace SampWeb
                 _socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _socketServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _socketServer.Bind(new IPEndPoint(IPAddress.Any, WebConfig.WebPort));
-
-                GetHost();/**/
             }
             catch (Exception ex)
             {
@@ -91,7 +89,9 @@ namespace SampWeb
                 return;
             }
             _isDisposed = true;
-
+            string text = (WebConfig.VirtualPath + WebConfig.PhysicalPath).ToLowerInvariant();
+            string appId = text.GetHashCode().ToString("x", CultureInfo.InvariantCulture);
+            _applicationManager.ShutdownApplication(appId);
         }
         #endregion
 
@@ -141,6 +141,7 @@ namespace SampWeb
                     {
                         string text = (WebConfig.VirtualPath + WebConfig.PhysicalPath).ToLowerInvariant();
                         string appId = text.GetHashCode().ToString("x", CultureInfo.InvariantCulture);
+                        _applicationManager.ShutdownApplication(appId);
                         var obj = _applicationManager.CreateObject(appId, typeof(Host), "/", WebConfig.PhysicalPath,
                           false);
                         _host = (Host)obj;
@@ -307,8 +308,9 @@ namespace SampWeb
 
         private void SimpleResponse(StateObject state)
         {
+            var host = GetHost();
             var conn = new RequestProcessor(state);
-           conn.StartProcess(WebConfig);
+            host.ProcessRequest(conn);
         }
 
         #endregion

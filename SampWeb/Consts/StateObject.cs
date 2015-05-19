@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SampWeb.Consts
 {
+    [Serializable]
     public class StateObject
     {
         public const int BufferSize = 1024;

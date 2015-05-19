@@ -7,32 +7,37 @@ using System.Threading.Tasks;
 
 namespace SampWeb.Consts
 {
+    [Serializable]
     public class WebConfig
     {
         /// <summary>
         /// 监听端口
         /// </summary>
-        public ushort WebPort { get;private set; }/*端口*/
+        public ushort WebPort { get; set; }/*端口*/
         /// <summary>
         /// 网站物理路径
         /// </summary>
-        public string PhysicalPath { get; private set; }/*路径*/
+        public string PhysicalPath { get;  set; }/*路径*/
         /// <summary>
         /// 虚拟路径
         /// </summary>
-        public string VirtualPath { get; private set; }/*虚拟路径*/
+        public string VirtualPath { get;  set; }/*虚拟路径*/
         /// <summary>
         /// 是否需要请求认证
         /// </summary>
-        public bool RequireAuthentication { get; private set; }/*请求认证*/
+        public bool RequireAuthentication { get;  set; }/*请求认证*/
         /// <summary>
         /// 是否开启目录浏览
         /// </summary>
-        public bool ShowDirectoryList { get; private set; }/*目录浏览*/
+        public bool ShowDirectoryList { get;  set; }/*目录浏览*/
         /// <summary>
         /// 端口监听的队列
         /// </summary>
         public int ListenQueue { get; set; }/*等待队列的长度*/
+
+        public WebConfig()
+        {
+        }
 
         public WebConfig(ushort port,string physicalPath,string virtualPath,bool requireAuth,bool showDirectoryList,int listenlen)
         {

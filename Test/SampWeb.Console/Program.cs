@@ -12,7 +12,7 @@ namespace SampWeb.Console
     {
         static void Main(string[] args)
         {
-            var server = new WebServer(new WebConfig(83,"D:\\","",false,true,Int32.MaxValue));
+            var server = new WebServer(new WebConfig(83, @"D:\自我开发\MonoMy", "", false, true, Int32.MaxValue));
             server.Start();
             Thread.Sleep(-1);
         }

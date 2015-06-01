@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------
+// <copyright file="Sponsor.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 using System;
 using System.Runtime.Remoting.Lifetime;

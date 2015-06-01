@@ -1,4 +1,10 @@
-﻿using System.Reflection;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Constants.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Reflection;
 
 namespace SampWeb
 {
@@ -15,7 +21,7 @@ namespace SampWeb
         /// <summary>
         /// Field HTTPError.
         /// </summary>
-        public const string HTTPError = "HTTP Error {0} - {1}.";
+        public const string HttpError = "HTTP Error {0} - {1}.";
 
         /// <summary>
         /// Field ServerError.
@@ -35,11 +41,11 @@ namespace SampWeb
         /// <summary>
         /// Field VWDName.
         /// </summary>
-        public const string VWDName = RuntimeVars.CopyingRight;
+        public const string VwdName = "SampWeb";
 
         /// <summary>
         /// Field VersionString.
         /// </summary>
-        public static readonly string VersionString = RuntimeVars.ServerVersion;
+        public static readonly string VersionString = Assembly.GetExecutingAssembly().GetName().Version.ToString();
     }
 }

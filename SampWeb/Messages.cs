@@ -1,3 +1,9 @@
+//-----------------------------------------------------------------------
+// <copyright file="Messages.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -69,15 +75,15 @@ namespace SampWeb
         /// <returns>The message.</returns>
         public static string FormatErrorMessageBody(int statusCode, string appName)
         {
-            string statusDescription = HttpWorkerRequest.GetStatusDescription(statusCode);
-            string string1 = string.Format(Constants.ServerError, appName);
-            string string2 = string.Format(Constants.HTTPError, statusCode, statusDescription);
-            string string3 = Constants.VersionInfo;
-            string string4 = Constants.VWDName;
+            var statusDescription = HttpWorkerRequest.GetStatusDescription(statusCode);
+            var string1 = string.Format(Constants.ServerError, appName);
+            var string2 = string.Format(Constants.HttpError, statusCode, statusDescription);
+            const string string3 = Constants.VersionInfo;
+            const string string4 = Constants.VwdName;
 
             return string.Format(CultureInfo.InvariantCulture, "<html>\r\n    <head>\r\n        <title>{0}</title>\r\n", statusDescription) +
                 "        <style>\r\n        \tbody {font-family:\"Verdana\";font-weight:normal;font-size: 8pt;color:black;} \r\n        \tp {font-family:\"Verdana\";font-weight:normal;color:black;margin-top: -5px}\r\n        \tb {font-family:\"Verdana\";font-weight:bold;color:black;margin-top: -5px}\r\n        \th1 { font-family:\"Verdana\";font-weight:normal;font-size:18pt;color:red }\r\n        \th2 { font-family:\"Verdana\";font-weight:normal;font-size:14pt;color:maroon }\r\n        \tpre {font-family:\"Lucida Console\";font-size: 8pt}\r\n        \t.marker {font-weight: bold; color: black;text-decoration: none;}\r\n        \t.version {color: gray;}\r\n        \t.error {margin-bottom: 10px;}\r\n        \t.expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }\r\n        </style>\r\n" +
-                string.Format(CultureInfo.InvariantCulture, Messages.HttpErrorFormat2, string1, string2, string3, string4);
+                string.Format(CultureInfo.InvariantCulture, HttpErrorFormat2, string1, string2, string3, string4);
         }
 
         /// <summary>
@@ -89,12 +95,12 @@ namespace SampWeb
         /// <returns>The message.</returns>
         public static string FormatExceptionMessageBody(string messageTitle, string messageHeader, string userMessage)
         {
-            string string1 = Constants.VersionInfo;
-            string string2 = Constants.VWDName;
+            const string string1 = Constants.VersionInfo;
+            const string string2 = Constants.VwdName;
 
             return string.Format(CultureInfo.InvariantCulture, "<html>\r\n    <head>\r\n        <title>{0}</title>\r\n", messageTitle) +
                 "        <style>\r\n        \tbody {font-family:\"Verdana\";font-weight:normal;font-size: 8pt;color:black;} \r\n        \tp {font-family:\"Verdana\";font-weight:normal;color:black;margin-top: -5px}\r\n        \tb {font-family:\"Verdana\";font-weight:bold;color:black;margin-top: -5px}\r\n        \th1 { font-family:\"Verdana\";font-weight:normal;font-size:18pt;color:red }\r\n        \th2 { font-family:\"Verdana\";font-weight:normal;font-size:14pt;color:maroon }\r\n        \tpre {font-family:\"Lucida Console\";font-size: 8pt}\r\n        \t.marker {font-weight: bold; color: black;text-decoration: none;}\r\n        \t.version {color: gray;}\r\n        \t.error {margin-bottom: 10px;}\r\n        \t.expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }\r\n        </style>\r\n" +
-                string.Format(CultureInfo.InvariantCulture, Messages.HttpErrorFormat3, messageTitle, messageHeader, string1, string2, userMessage);
+                string.Format(CultureInfo.InvariantCulture, HttpErrorFormat3, messageTitle, messageHeader, string1, string2, userMessage);
         }
 
         /// <summary>
@@ -106,13 +112,13 @@ namespace SampWeb
         /// <returns>The text.</returns>
         public static string FormatDirectoryListing(string dirPath, string parentPath, FileSystemInfo[] elements)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
-            string string1 = string.Format(Constants.DirListing, dirPath);
-            string string2 = Constants.VersionInfo;
-            string string3 = Constants.VWDName;
+            var string1 = string.Format(Constants.DirListing, dirPath);
+            const string string2 = Constants.VersionInfo;
+            const string string3 = Constants.VwdName;
 
-            string value = string.Format(CultureInfo.InvariantCulture, Messages.DirListingTail, string2, string3);
+            var value = string.Format(CultureInfo.InvariantCulture, DirListingTail, string2, string3);
 
             stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "<html>\r\n    <head>\r\n    <title>{0}</title>\r\n", string1));
             stringBuilder.Append("        <style>\r\n        \tbody {font-family:\"Verdana\";font-weight:normal;font-size: 8pt;color:black;} \r\n        \tp {font-family:\"Verdana\";font-weight:normal;color:black;margin-top: -5px}\r\n        \tb {font-family:\"Verdana\";font-weight:bold;color:black;margin-top: -5px}\r\n        \th1 { font-family:\"Verdana\";font-weight:normal;font-size:18pt;color:red }\r\n        \th2 { font-family:\"Verdana\";font-weight:normal;font-size:14pt;color:maroon }\r\n        \tpre {font-family:\"Lucida Console\";font-size: 8pt}\r\n        \t.marker {font-weight: bold; color: black;text-decoration: none;}\r\n        \t.version {color: gray;}\r\n        \t.error {margin-bottom: 10px;}\r\n        \t.expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }\r\n        </style>\r\n");
@@ -130,11 +136,11 @@ namespace SampWeb
 
             if (elements != null)
             {
-                for (int i = 0; i < elements.Length; i++)
+                for (var i = 0; i < elements.Length; i++)
                 {
                     if (elements[i] is FileInfo)
                     {
-                        FileInfo fileInfo = (FileInfo)elements[i];
+                        var fileInfo = (FileInfo)elements[i];
 
                         stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0,38:dddd, MMMM dd, yyyy hh:mm tt} {1,12:n0} <A href=\"{2}\">{2}</A>\r\n", fileInfo.LastWriteTime, fileInfo.Length, fileInfo.Name));
                     }
@@ -142,7 +148,7 @@ namespace SampWeb
                     {
                         if (elements[i] is DirectoryInfo)
                         {
-                            DirectoryInfo directoryInfo = (DirectoryInfo)elements[i];
+                            var directoryInfo = (DirectoryInfo)elements[i];
 
                             stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0,38:dddd, MMMM dd, yyyy hh:mm tt}        &lt;dir&gt; <A href=\"{1}/\">{1}</A>\r\n", directoryInfo.LastWriteTime, directoryInfo.Name));
                         }
